@@ -10,6 +10,13 @@
         .modal-dialog{
             width: 1200px
         }
+        .btn-export { 
+            display:flex;
+            align-items:center;
+            border-color: #1d6f42;
+            color: #1d6f42;
+            margin-bottom: 20px;
+        }
     </style>
     @endsection
 @section('content')
@@ -75,6 +82,14 @@
                     </a>
                 </div>
                 <div class="card-body">
+                    <div style="display: flex;justify-content: flex-end;">
+                        <button class="btn btn-export">
+                            Export Excel 
+                            <span class="material-icons">
+                                publish
+                            </span>
+                        </button>
+                    </div>
                     <table class="datatable table table-striped primary" cellspacing="0" width="100%"
                            id="data-server-side">
                         <thead>

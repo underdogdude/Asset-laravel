@@ -2,6 +2,31 @@
 @section('title', 'ครุภัณฑ์')
 @section('menu2', 'active')
 @section('content')
+    <style>
+        .upload_btn_section { 
+            margin-top:3px;
+        }
+        .upload_btn_section { 
+            margin-top:3px;
+        }
+        .btn-remove{ 
+            cursor:pointer;
+            margin-top: 5px;
+            margin-bottom: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .input__container small{
+            color: #a2a2a2;
+        } 
+        .input__container { 
+            margin-top: 15px;
+        }
+        .btn-remove.show {
+            display: flex !important;
+        }
+    </style>
     <div class="row">
         <div class="col-md-12">
             <div class="card">
@@ -110,6 +135,56 @@
                                 </div>
                             </div>
 
+
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <label>รูปภาพครุภัณฑ์</label>
+                                    <div id="img_preview" style="margin-top: 8px">
+                                        <!-- <img src="{{$data->image}}" alt="" id="preview" 
+                                        onerror="this.src='../../images/default.jpg'" width="100%"> -->
+                                        @if($data->image != '')
+                                            <img src="{{$data->image}}" 
+                                                alt="" 
+                                                id="preview" 
+                                                width="100%" />
+                                        @else
+                                            
+                                            <img src="../../images/default.jpg" 
+                                                alt="" 
+                                                id="preview" 
+                                                width="100%" />
+                                        @endif
+                                    </div>
+                                    <!-- <form enctype="multipart/form-data" name="upload_form">
+                                    @csrf -->
+                                        <div class="upload_btn_section text-center">
+
+                                        @if($data->image != '')
+                                            <a class="text-danger text-center btn-remove show" id="btn_remove" onclick="removeImage()"> 
+                                                ลบรูปภาพ
+                                                <span class="material-icons">
+                                                    delete_outline
+                                                </span>
+                                            </a>
+                                        @else
+                                            <a class="text-danger text-center btn-remove hide" id="btn_remove" onclick="removeImage()"> 
+                                                ลบรูปภาพ
+                                                <span class="material-icons">
+                                                    delete_outline
+                                                </span>
+                                            </a>
+                                        @endif
+                                           
+                                            <div class="text-left input__container">
+                                                <input type="file" name="image" id="image_file_input" class="form-control"  accept="image/*" />
+                                                <small>ไฟล์รูปต้องมีขนาดไม่เกิน 10MB</small>
+                                            </div>
+                                            <!-- <button type="submit" class="btn btn-success">Upload</button> -->
+                                        </div>
+                                    <!-- </form> -->
+                                </div>
+                            </div>
+
                             <hr>
                             <div class="row">
                                 <a href="{{url('assets')}}" class="btn btn-default">ย้อนกลับ</a>
@@ -127,6 +202,17 @@
 @endsection
 @section('script')
     <script>
+
+
+        /* 
+            STATE
+            1 = '' but change in DB to -> '';
+            2 = IMG change DB to IMG;
+            3 = '' but NOT change in DB;
+        */
+        var image_state = ''; 
+        var check_has_image = $("#btn_remove").hasClass('show');
+            image_state = "3";
 
         function checkForm() {
             var inv_number = document.getElementById('inv_number').value;
@@ -183,8 +269,119 @@
         }
 
         function saveForm() {
+
+            // upload image
+            if( image_state !== '3' ){
+                if (image_state === '1') { 
+                    $.ajax({
+                        url:"{{ route('imageupload.upload') }}",
+                        method:"POST",
+                        data: {
+                            image : '' ,
+                            id: {{$data->id}}
+                        },
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success:function()
+                        {
+                            submitForm();
+                        },
+                        error: function () {
+                            swal({
+                                title: "อุ๊ปส์ เกิดข้อผิดพลาด",
+                                text: "เกิดข้อผิดพลาดบางอย่าง กรุณาลองใหม่อีกครั้ง.",
+                                timer: 2000,
+                                type: "error",
+                                showConfirmButton: true,
+                                confirmButtonText: 'ตกลง',
+                            });
+                        }
+                    });
+
+                }else { 
+                    var fd = new FormData();
+                    var files = $('#image_file_input')[0].files[0];
+                        fd.append('image',files);
+                        fd.append('id', {{$data->id}});
+
+                    $.ajax({
+                        url:"{{ route('imageupload.upload') }}",
+                        method:"POST",
+                        data: fd,
+                        dataType:'JSON',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        contentType: false,
+                        cache: false,
+                        processData: false,
+                        success:function()
+                        {
+                            submitForm();
+                        },
+                        error: function () {
+                            swal({
+                                title: "อุ๊ปส์ เกิดข้อผิดพลาด",
+                                text: "เกิดข้อผิดพลาดบางอย่าง กรุณาลองใหม่อีกครั้ง.",
+                                timer: 2000,
+                                type: "error",
+                                showConfirmButton: true,
+                                confirmButtonText: 'ตกลง',
+                            });
+                        }
+                    });
+                }
+            }else { 
+                submitForm();
+            }
+        }
+
+
+        function removeImage() { 
+            $("#preview").attr('src', '../../images/default.jpg');
+            $("#image_file_input").val('');
+
+            $("#btn_remove").removeClass("show");
+            $("#btn_remove").addClass("hide");
+
+                image_state = '1';
+        }
+
+        // Show Preview
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+
+                var reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    $('#preview').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]); // convert to base64 string
+
+                $("#btn_remove").removeClass("hide");
+                $("#btn_remove").addClass("show");
+
+                image_state = '2';
+
+            }else { 
+
+                $("#preview").attr('src', '../../images/default.jpg');
+                $("#btn_remove").removeClass("show");
+                $("#btn_remove").addClass("hide");
+                image_state = '1';
+            }
+        }
+
+        $("#image_file_input").change(function() {
+            readURL(this);
+        });
+
+        function submitForm() { 
             var form = $('#editForm')[0];
             var data = new FormData(form);
+                //delete image file 
+                data.delete('image');
             $.ajax({
                 type: "POST",
                 headers: {
@@ -220,7 +417,6 @@
                     }
                 },
                 error: function (data) {
-                    console.log(data);
                     swal({
                         title: "อุ๊ปส์ เกิดข้อผิดพลาด",
                         text: "เกิดข้อผิดพลาดบางอย่าง กรุณาลองใหม่อีกครั้ง.",
@@ -232,6 +428,7 @@
                 }
             });
         }
+
     </script>
 
 @endsection

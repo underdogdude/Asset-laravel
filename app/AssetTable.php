@@ -19,5 +19,6 @@ class AssetTable extends Model
         'room',
         'year',
         'user_manage',
+        'image'
     ];
 }

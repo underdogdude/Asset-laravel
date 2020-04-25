@@ -25,6 +25,7 @@ class CreateAssetTablesTable extends Migration
             $table->string('room')->nullable();
             $table->string('year')->nullable();
             $table->string('user_manage')->nullable();
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }

@@ -19,6 +19,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::get('user/server-side', 'Api\DataTableController@userServerSide');
 Route::get('asset/server-side', 'Api\DataTableController@assetServerSide');
+// bright
+Route::post('assetSearch/server-side', 'Api\DataTableController@assetSearchServerSide');
+
+// 
 Route::post('asset-count/server-side', 'Api\DataTableController@assetCountServerSide');
 Route::post('login', 'Api\ApplicationController@login');
 Route::post('addCheckAsset', 'Api\ApplicationController@addCheckAsset');

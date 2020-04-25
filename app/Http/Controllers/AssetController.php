@@ -25,8 +25,10 @@ class AssetController extends Controller
 
     public function store(Request $request)
     {
-        AssetTable::create($request->all());
-        return 'success';
+        $lastId = AssetTable::create($request->all())->id;
+        // return 'success';
+        return response()->json(array('success' => true, 'last_insert_id' => $lastId ), 200);
+
     }
 
     public function show($id)

@@ -23,6 +23,22 @@ class DataTableController extends Controller
         return Datatables::of($data)->make();
     }
 
+    public function assetSearchServerSide(Request $request)
+    {
+        $data = AssetTable::all();
+        if($request->user != "") {
+
+            $temp = [];
+            foreach ($data as $list) {
+                if ($list->user_manage == $request->user) {
+                    array_push($temp, $list);
+                }
+            }
+            $data = $temp;
+        }
+        return Datatables::of($data)->make();
+    }
+
     public function assetCountServerSide(Request $request)
     {
 
