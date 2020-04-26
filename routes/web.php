@@ -19,6 +19,9 @@ Route::get('/excel', 'HomeController@import')->name('excel');
 // bright import
 Route::get('/import_excel', 'ImportExcelController@index');
 Route::post('/import_excel/import', 'ImportExcelController@import');
+
+Route::get('/export_excel', 'ExportExcelController@index');
+Route::post('/export_excel/export', 'ExportExcelController@export');
 // 
 Route::get('/user_manage', 'HomeController@user_manage')->name('user_manage');
 

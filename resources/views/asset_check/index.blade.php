@@ -83,7 +83,7 @@
                 </div>
                 <div class="card-body">
                     <div style="display: flex;justify-content: flex-end;">
-                        <button class="btn btn-export">
+                        <button class="btn btn-export" onclick="getAllData()">
                             Export Excel 
                             <span class="material-icons">
                                 publish
@@ -161,6 +161,11 @@
 @endsection
 @section('script')
     <script>
+
+        var golbal_dataFromLoadSearch = "";
+        var golbal_date_start = "";
+        var golbal_date_end = "";
+
         $('#date-start').bootstrapMaterialDatePicker({
             weekStart : 0,
             time: false ,
@@ -218,7 +223,14 @@
                         user:user,
                     },
                     dataFilter: function(reps) {
+
                         swal.close();
+                        var data = JSON.parse(reps)
+
+                        golbal_dataFromLoadSearch = data.data;
+                        golbal_date_start = date_start;
+                        golbal_date_end = date_end;
+
                         return reps;
                     },
                     error:function(err){
@@ -297,7 +309,7 @@
             console.log(room);
             console.log(user);
 
-            loadDatable(date_start,date_end,location,room,user)
+            loadDatable(date_start,date_end,location,room,user);
         }
 
         function searchAssetCount() {
@@ -479,6 +491,58 @@
             }]);
         }
 
+
+       
+
+        function getAllData(dataFromLoadSearch, date_start, date_end) { 
+            $.ajax({
+                url:"{{ url('export_excel/export') }}",
+                type: "POST",
+                data:{
+                    data: golbal_dataFromLoadSearch,
+                    date_start: golbal_date_start,
+                    date_end: golbal_date_end
+                },
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                },
+                // This line help to remove can't read response
+                xhrFields: {
+                    responseType: 'blob',
+                },
+                success:function(result, status, xhr) {
+
+                    console.log(result);
+                    console.log(status);
+                    console.log(xhr);
+
+                    // IF YOU WANT TO HAVE FILE NAME >>
+                    // var disposition = xhr.getResponseHeader('content-disposition');
+                    // var matches = /"([^"]*)"/.exec(disposition);
+                    // var filename = (matches != null && matches[1] ? matches[1] : 'salary.xlsx');
+                    // // The actual download
+                    // var blob = new Blob([result], {
+                    //     type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                    // });
+
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(result);
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                },
+                error: function () {
+                    swal({
+                        title: "อุ๊ปส์ เกิดข้อผิดพลาด",
+                        text: "เกิดข้อผิดพลาดบางอย่าง กรุณาลองใหม่อีกครั้ง.",
+                        timer: 2000,
+                        type: "error",
+                        showConfirmButton: true,
+                        confirmButtonText: 'ตกลง',
+                    });
+                }
+            });
+        }
     </script>
 @endsection
 

@@ -75,7 +75,7 @@
                     <!-- TODO -->
                     <button type="button" class="btn btn-outline-primary import__btn" data-toggle="modal" data-target="#importModal">
                     <i class="icon fa fa-plus" aria-hidden="true"></i>
-                        Launch demo modal
+                        Import Excel File
                     </button>
                     <!--  -->
                 </div>
