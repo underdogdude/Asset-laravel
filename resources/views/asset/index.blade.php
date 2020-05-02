@@ -464,7 +464,7 @@
                                 console.log(data);
                                 if (data === 'success') {
                                     setTimeout(function () {
-                                        loadDatable();
+                                        filterOnchange();
                                     }, 1000);
                                     swal({
                                         title: "ทำรายการสำเร็จแล้ว",
@@ -474,7 +474,8 @@
                                     });
                                 } else if (data === 'NoDelete') {
                                     setTimeout(function () {
-                                        loadDatable();
+                                        // Get search term again
+                                        filterOnchange();
                                     }, 1000);
                                     swal({
                                         title: "อุ๊ปส์ เกิดข้อผิดพลาด",
