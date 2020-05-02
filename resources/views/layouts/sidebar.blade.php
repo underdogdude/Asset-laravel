@@ -36,11 +36,11 @@
                     <ul>
                         <li class="section"><i class="fa fa-file-excel-o" aria-hidden="true"></i>Report</li>
                         <li><a href="{{url('asset-check')}}">รายงานตรวจครุภัณฑ์</a></li>
-                        <li><a href="#">Report2</a></li>
+                        <!-- <li><a href="#">Report2</a></li>
                         <li><a href="#">Report3</a></li>
                         <li><a href="#">Report4</a></li>
                         <li><a href="#">Report5</a></li>
-                        <li><a href="#">Report6</a></li>
+                        <li><a href="#">Report6</a></li> -->
                     </ul>
                 </div>
             </li>

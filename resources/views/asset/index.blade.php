@@ -81,7 +81,16 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-6"></div>
+                        <div class="col-md-2"></div>
+                        <div class="col-md-4 form-group form_bright_custom">
+                            <label for="sRoom" class="col-sm-4 text-right">
+                                เลือกตามห้อง: 
+                            </label>
+                            <div class="col-sm-8" style="padding:0;" class="">
+                                <select class="select2 " name="sRoom" id="sRoom" onchange="filterOnchange()">
+                                </select>
+                            </div>
+                        </div>
                         <div class="col-md-6 form-group form_bright_custom">
                             <label for="sUser" class="col-sm-4 text-right">
                                 เลือกตามผู้รับผิดชอบ: 
@@ -94,7 +103,6 @@
                                         @endforeach
                                 </select>
                             </div>
-                            
                         </div>
                     </div>
 
@@ -233,18 +241,44 @@
                 type: "GET",
             }).done(function (res) { 
                 user_manage_lists = res.data;
-                loadDatable('');
+            });
+
+            $.ajax({
+                url: '{{url('api/getLocation')}}',
+                type: "GET",
+            }).done(function (res) { 
+
+                var room_filter_elem = $("#sRoom");
+                var string = `<option value="all" selected>ทั้งหมด</option>`;
+                for(var i = 0 ; i < res.length ; i++) { 
+                    for(var j in res[i].room) {
+                        string += `
+                            <option value="${res[i].room[j].id}">
+                                ${res[i].room[j].name} - ${res[i].location.name}
+                            </option>
+                        `
+                    } 
+                }
+                $(room_filter_elem).html(string);
+                loadDatable();
             });
         });
         
 
-        function loadDatable(user) {
+        function loadDatable(user = '', room = '') {
 
             var search_user = '';
-            if(user === 'all') { 
-                search_user = '';
+            if(user === 'all' || user === '') { 
+                search_user = 'all';
             }else{ 
                 search_user = user;
+            }
+            
+            var search_room = '';
+            if(room === 'all' || room === '') { 
+                search_room = 'all';
+            }else{ 
+                search_room = room;
             }
 
             var dt = $('#data-server-side').DataTable({
@@ -256,7 +290,8 @@
                     type: "POST",
                     dataType: 'json',
                     data: { 
-                        user: search_user
+                        user: search_user,
+                        room: search_room
                     },
                     dataFilter: function(reps) {
                         swal.close();
@@ -324,7 +359,7 @@
             });
 
             $('#data-server-side tbody').on('click', 'tr td button.delete-control', function () {
-                return;
+                // return;
                 var tr = $(this).closest('tr');
                 var row = dt.row(tr);
                 var data = row.data();
@@ -438,6 +473,9 @@
                                         showConfirmButton: false
                                     });
                                 } else if (data === 'NoDelete') {
+                                    setTimeout(function () {
+                                        loadDatable();
+                                    }, 1000);
                                     swal({
                                         title: "อุ๊ปส์ เกิดข้อผิดพลาด",
                                         text: "ไม่สามารถลบได้ เนื่องจากกำลังถูกใช้งาน.",
@@ -464,9 +502,12 @@
 
         // bright add 
         function filterOnchange() {
-            var elem = $(sUser);
-            var user_selected_id = $(elem).val();
-            loadDatable( user_selected_id );
+            var user_elem = $(sUser);
+            var room_elem = $(sRoom);
+
+            var user_selected_id = $(user_elem).val();
+            var room_selected_id = $(room_elem).val();
+            loadDatable( user_selected_id, room_selected_id );
         }
             
         // Show import btn when file uploaded

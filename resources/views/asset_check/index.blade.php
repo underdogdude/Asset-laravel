@@ -80,6 +80,13 @@
                             <span class="title">รีเฟรช</span>
                         </div>
                     </a>
+
+                    <div class="btn btn-primary btn-social " onclick="exportAllExcel()" style="margin-left: 20px">
+                        <div class="info">
+                            <i class="icon fa fa-file-excel-o" aria-hidden="true"></i>
+                            นำออกข้อมูลทั้งหมด
+                        </div>
+                    </div>
                 </div>
                 <div class="card-body">
                     <div style="display: flex;justify-content: flex-end;">
@@ -542,6 +549,91 @@
                     });
                 }
             });
+        }
+
+
+        function exportAllExcel() { 
+            swal.showLoading();
+            var date_start = $('#date-start').val();
+            var date_end = $('#date-end').val();
+            var location = $('#sLocation').val();
+            var room = $('#sRoom').val();
+            var user = $('#sUser').val();
+
+            var data = { 
+                date_start,
+                date_end,
+                location,
+                room,
+                user
+            }
+
+
+            $.ajax({
+                url:  '{{ url('api/asset-count/server-side') }}',
+                type: "POST",
+                dataType: 'json',
+                data:{
+                    date_start:date_start,
+                    date_end:date_end,
+                    location:location,
+                    room:room,
+                    user:user,
+                },
+
+                success:function(result) {
+                    $.ajax({
+                        url:"{{ url('export_excel/export-all') }}",
+                        type: "POST",
+                        data: {
+                            date_start:date_start,
+                            date_end:date_end,
+                            location:location,
+                            room:room,
+                            user:user,
+                            data_check: result.data
+                        },
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                        },
+                        // This line help to remove can't read response
+                        xhrFields: {
+                            responseType: 'blob',
+                        },
+                        success:function(result, status, xhr) {
+
+                            var link = document.createElement('a');
+                            link.href = window.URL.createObjectURL(result);
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                            swal.close();
+                        },
+                        error: function (err, status, xhr) {
+                           
+                            swal({
+                                title: "อุ๊ปส์ เกิดข้อผิดพลาด",
+                                text: "เกิดข้อผิดพลาดบางอย่าง กรุณาลองใหม่อีกครั้ง.",
+                                timer: 2000,
+                                type: "error",
+                                showConfirmButton: true,
+                                confirmButtonText: 'ตกลง',
+                            });
+                        }
+                    });
+                },
+                error: function () {
+                    swal({
+                        title: "อุ๊ปส์ เกิดข้อผิดพลาด",
+                        text: "เกิดข้อผิดพลาดบางอย่าง กรุณาลองใหม่อีกครั้ง.",
+                        timer: 2000,
+                        type: "error",
+                        showConfirmButton: true,
+                        confirmButtonText: 'ตกลง',
+                    });
+                }
+            });
+            
         }
     </script>
 @endsection

@@ -94,7 +94,19 @@ class UserTableController extends Controller
 
     public function destroy($id)
     {
-        DB::table('user_app_tables')->where('id', '=', $id)->delete();
-        return 'success';
+        // bright idd
+        $data = DB::table('asset_tables')->where('user_manage','=',$id)
+            ->first();
+
+        if(is_null($data)) { 
+            DB::table('user_app_tables')->where('id', '=', $id)->delete();
+            return 'success';
+        }else{
+            return 'NoDelete';
+        }
+        // // Oldone
+        // DB::table('user_app_tables')->where('id', '=', $id)->delete();
+        // return 'success';
     }
+
 }

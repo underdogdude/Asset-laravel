@@ -26,17 +26,40 @@ class DataTableController extends Controller
     public function assetSearchServerSide(Request $request)
     {
         $data = AssetTable::all();
-        if($request->user != "") {
+        // if($request->user != "") {
 
+        //     $temp = [];
+        //     foreach ($data as $list) {
+        //         if ($list->user_manage == $request->user) {
+        //             array_push($temp, $list);
+        //         }
+        //     }
+        //     $data = $temp;
+        // }
+        // return Datatables::of($data)->make();
+
+        $result = $data;
+      
+        if ($request->room != 'all') {
             $temp = [];
-            foreach ($data as $list) {
+            foreach ($result as $list) {
+                if ($list->room == $request->room) {
+                    array_push($temp, $list);
+                }
+            }
+            $result = $temp;
+        }
+
+        if ($request->user != 'all') {
+            $temp = [];
+            foreach ($result as $list) {
                 if ($list->user_manage == $request->user) {
                     array_push($temp, $list);
                 }
             }
-            $data = $temp;
+            $result = $temp;
         }
-        return Datatables::of($data)->make();
+        return Datatables::of($result)->make();
     }
 
     public function assetCountServerSide(Request $request)

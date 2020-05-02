@@ -22,6 +22,7 @@ Route::post('/import_excel/import', 'ImportExcelController@import');
 
 Route::get('/export_excel', 'ExportExcelController@index');
 Route::post('/export_excel/export', 'ExportExcelController@export');
+Route::post('/export_excel/export-all', 'ExportExcelController@exportAll');
 // 
 Route::get('/user_manage', 'HomeController@user_manage')->name('user_manage');
 

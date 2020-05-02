@@ -47,19 +47,43 @@ class ImportExcelController extends Controller{
                 {
                     
                         if($row[1] != null && $row[2] != null  ) {
-    
-                            AssetTable::create([
-                                'inv_number' => trim($row[1]),
-                                'erp_number' => trim($row[2]),
-                                'description1' => trim($row[3]),
-                                'description2' => trim($row[4]),
-                                'code' => trim($row[5]),
-                                'price' => trim($row[6]),
-                                'location' => trim($row[7]),
-                                'room' => trim($row[8]),
-                                'year' => trim($row[9]),
-                                'user_manage' => trim($row[10])
-                            ]);
+                            
+                            
+                           
+
+                            if(AssetTable::where('inv_number', '=', trim($row[1]))->doesntExist())
+                            {
+                                // Create New
+                                AssetTable::create([
+                                    'inv_number' => trim($row[1]),
+                                    'erp_number' => trim($row[2]),
+                                    'description1' => trim($row[3]),
+                                    'description2' => trim($row[4]),
+                                    'code' => trim($row[5]),
+                                    'price' => trim($row[6]),
+                                    'location' => trim($row[7]),
+                                    'room' => trim($row[8]),
+                                    'year' => trim($row[9]),
+                                    'user_manage' => trim($row[10])
+                                ]);
+
+                            }else
+                            {
+                                DB::table('asset_tables')
+                                    ->where('inv_number',trim($row[1]))
+                                    ->update([
+                                        'erp_number' => trim($row[2]),
+                                        'description1' => trim($row[3]),
+                                        'description2' => trim($row[4]),
+                                        'code' => trim($row[5]),
+                                        'price' => trim($row[6]),
+                                        'location' => trim($row[7]),
+                                        'room' => trim($row[8]),
+                                        'year' => trim($row[9]),
+                                        'user_manage' => trim($row[10])
+                                    ]);
+
+                            }
     
                             if(UserAppTable::where('name', '=', trim($row[10]))->doesntExist())
                             {

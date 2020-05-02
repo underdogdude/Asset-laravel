@@ -102,7 +102,7 @@
                 @else
                     <li class="dropdown profile">
                         <a href="/html/pages/profile.html" class="dropdown-toggle"  data-toggle="dropdown">
-                            <img class="profile-img" src="{{asset('flat-admin/images/profile.png')}}">
+                            <img class="profile-img" src="{{asset('/images/mahidol.jpg')}}">
                             <div class="title">Profile</div>
                         </a>
                         <div class="dropdown-menu">

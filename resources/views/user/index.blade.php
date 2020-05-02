@@ -432,6 +432,9 @@
                                         showConfirmButton: false
                                     });
                                 } else if (data === 'NoDelete') {
+                                    setTimeout(function () {
+                                        loadDatable();
+                                    }, 1000);
                                     swal({
                                         title: "อุ๊ปส์ เกิดข้อผิดพลาด",
                                         text: "ไม่สามารถลบได้ เนื่องจากกำลังถูกใช้งาน.",

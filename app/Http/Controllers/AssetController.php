@@ -63,5 +63,18 @@ class AssetController extends Controller
     public function destroy($id)
     {
         //
+        // bright did
+          // bright idd
+            $data = DB::table('asset_check_tables')->where('assetId','=',$id)
+                    ->first();
+
+            if(is_null($data)) { 
+                DB::table('asset_tables')->where('id', '=', $id)->delete();
+                return 'success';
+            }else{
+                return 'NoDelete';
+            }
+            
+        
     }
 }
